@@ -70,7 +70,7 @@ function main(context: types.IExtensionContext) {
 
     // Register Mod Type for non-tModLoader saves
     context.registerModType(
-        'terraria-tmod-type', 25, 
+        'terraria-save-type', 25, 
         (gameId: string) => gameId === GAME_ID,
         () => baseGameDocumentsPath(),
         () => false,

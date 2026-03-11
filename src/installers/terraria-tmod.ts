@@ -2,11 +2,12 @@
 import path from 'path';
 import { GAME_ID } from '../common';
 import { types } from 'vortex-api';
+import { IInstruction } from 'vortex-api/lib/types/IExtensionContext';
 
 const tmodExtension = ".tmod";
 
 function testTModInstructions(instructions: types.IInstruction[]): boolean {
-    const tModFile = instructions.find(i => path.extname(i.destination) === tmodExtension);
+    const tModFile = instructions.find(i => i.destination && path.extname(i.destination) === tmodExtension);
     return !!tModFile;
 }
 
@@ -20,10 +21,10 @@ function testSupportedTmodContent(files: string[], gameId: string) {
     });
 }
 
-function installTmodMods(files: string[]) {
+function installTmodMods(files: string[]): Promise<types.IInstallResult> {
     const modFiles = files.filter(file => path.extname(file).toLowerCase() === tmodExtension);
 
-    const instructions = modFiles.map(file => {
+    const instructions: IInstruction[] = modFiles.map(file => {
         const destDir = 'Mods';
         return {
             type: 'copy',
