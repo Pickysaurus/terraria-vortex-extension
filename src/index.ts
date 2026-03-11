@@ -1,6 +1,6 @@
 
 import path from 'path';
-import { fs, types, util } from 'vortex-api';
+import { fs, selectors, types, util } from 'vortex-api';
 import { GAME_ID, STEAMAPP_ID, TMOD_STEAMAPP_ID } from './common';
 import { testSupportedTmodContent, installTmodMods, testTModInstructions } from './installers/terraria-tmod';
 import { testSupportedSaveContent, installSaveMods } from './installers/terraria-savemod';
@@ -18,6 +18,7 @@ function main(context: types.IExtensionContext) {
             {
                 id: 'tmod-loader-tool',
                 name: 'tModLoader',
+                logo: 'tModLoader.jpg',
                 queryPath: async () => {
                     const tMod: types.IGameStoreEntry = await util.GameStoreHelper.findByAppId(TMOD_STEAMAPP_ID);
                     return tMod?.gamePath;
@@ -25,16 +26,18 @@ function main(context: types.IExtensionContext) {
                 requiredFiles: [
                     'start-tModLoader.bat',
                 ],
-                executable: () => 'start-tModLoader.bat'
-
+                executable: () => 'start-tModLoader.bat',
+                shell: true,
             },
             {
                 id: 'terraria-modder',
                 name: 'TerrariaModder',
+                logo: 'TerrariaModder.png',
                 requiredFiles: [
                     'TerrariaInjector.exe'
                 ],
-                executable: () => 'TerrariaInjector.exe'
+                executable: (discoverPath: string) => discoverPath ? path.join(discoverPath, 'TerrariaInjector.exe') : 'TerrariaInjector.exe',
+                defaultPrimary: true
             }
         ],
         queryModPath: () => path.join('TerrariaModder', 'mods'),
@@ -76,6 +79,42 @@ function main(context: types.IExtensionContext) {
         () => false,
         {
             name: 'Vanilla Save'
+        }
+    );
+
+    // Add a new toolbar button to open the tModLoader folders
+    context.registerAction(
+        'mod-icons', 
+        300, 
+        'open-ext', 
+        {},
+        'Open tModLoader Mods Folder', 
+        () => util.GameStoreHelper.findByAppId(TMOD_STEAMAPP_ID)
+            .then((tMod) => {
+                if (!tMod) return;
+                return util.opn(tMod?.path).catch(() => null);
+            }), 
+        () => {
+            const state = context.api.getState();
+            const gameMode = selectors.activeGameId(state);
+            return (gameMode === GAME_ID);
+        }
+    );
+
+    context.registerAction(
+        'mod-icons', 
+        300, 
+        'open-ext', 
+        {},
+        'Open tModLoader Folder', 
+        () => {
+            const docPath = path.join(baseGameDocumentsPath(), `tModLoader`);
+            util.opn(docPath).catch(() => null);
+        }, 
+        () => {
+            const state = context.api.getState();
+            const gameMode = selectors.activeGameId(state);
+            return (gameMode === GAME_ID);
         }
     );
 
