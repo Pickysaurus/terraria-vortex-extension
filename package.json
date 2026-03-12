@@ -1,0 +1,32 @@
+{
+  "name": "game_terraria",
+  "version": "1.0.2",
+  "description": "Mange mods for Terraria with Vortex",
+  "main": "./out/index.js",
+  "repository": "",
+  "scripts": {
+    "webpack": "node ./node_modules/webpack/bin/webpack --config webpack.config.js --progress --profile --color",
+    "bundle7z": "7z a -t7z sample-extension.7z .\\dist\\index.js .\\dist\\info.json",
+    "build": "npm run webpack && npm run copyassets && extractInfo",
+    "copyassets": "cpy \"src/assets/*\" dist --flat"
+  },
+  "author": "Senjay",
+  "license": "MIT",
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.1",
+    "cpy-cli": "^7.0.0",
+    "fs": "^0.0.1-security",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.3",
+    "vortex-api": "Nexus-Mods/vortex-api",
+    "webpack": "^5.104.1",
+    "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+  }
+}
