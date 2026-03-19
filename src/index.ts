@@ -5,6 +5,7 @@ import { GAME_ID, STEAMAPP_ID, TMOD_STEAMAPP_ID } from './common';
 import { testSupportedTmodContent, installTmodMods, testTModInstructions } from './installers/terraria-tmod';
 import { testSupportedSaveContent, installSaveMods } from './installers/terraria-savemod';
 import { testTerrariaModderSupported, installTerrariaModderMod, testTerrariaModderCoreSupported, installTerrariaModderCore } from './installers/terraria-modder-mod';
+import migrateTo102 from './migrations/migrateTo102';
 
 const baseGameDocumentsPath = () => path.join(util.getVortexPath('documents'), `My Games`, `Terraria`);
 
@@ -58,7 +59,7 @@ function main(context: types.IExtensionContext) {
 
     // We'd need to migrate the existing user data to support this update
     // All existing mods need to be flagged with the "terraria-tmod-type"
-    // context.registerMigration((oldVersion: string) => undefined);
+    context.registerMigration((oldVersion: string) => migrateTo102(oldVersion, context.api));
 
     // Register Mod Type for tModLoader
     context.registerModType(
